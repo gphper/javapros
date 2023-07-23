@@ -9,7 +9,15 @@ import java.util.Vector;
 public class MyPanel extends JPanel implements KeyListener,Runnable {
     Hero hero = null;
     Vector<EnemyTank> enemyTank = new Vector<>();
+    // 存放炸弹的集合
+    Vector<Bomb> bombs = new Vector<>();
     int enemyTankSize = 3;
+
+    // 定义三张图
+    Image image1 = null;
+    Image image2 = null;
+    Image image3 = null;
+
     public MyPanel(){
         hero = new Hero(100, 500,0);
         hero.setSpeed(5);
@@ -21,6 +29,10 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
             tank.shots.add(shot);
             enemyTank.add(tank);
         }
+
+        image1 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/big.png"));
+        image2 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/mid.png"));
+        image3 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/small.png"));
     }
     @Override
     public void paint(Graphics g) {
@@ -49,10 +61,32 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
                         tmp.shots.remove(shot);
                     }
                 }
+            }else{
+                enemyTank.remove(tmp);
             }
-
         }
 
+        // 绘制爆炸效果
+        if (bombs.size() > 0){
+            for (int i = 0; i < bombs.size();i++){
+                Bomb bomb = bombs.get(i);
+
+                if (bomb.life == 0) {
+                   bombs.remove(bomb);
+                   continue;
+                }
+
+                if (bomb.life > 6){
+                    g.drawImage(image1, bomb.x, bomb.y,100,100,this);
+                }else if(bomb.life > 3){
+                    g.drawImage(image2, bomb.x, bomb.y,100,100,this);
+                } else{
+                    g.drawImage(image3, bomb.x, bomb.y,100,100,this);
+                }
+
+                bomb.lifeDown();
+            }
+        }
     }
 
     /**
@@ -178,13 +212,14 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
     }
 
 
-    public static void hitTank(Shot shot,EnemyTank tank){
+    public void hitTank(Shot shot,EnemyTank tank){
         switch (tank.getDirect()){
             case 0:
             case 1:
                 if(shot.x > tank.getX() && shot.x < tank.getX() + 110 && shot.y > tank.getY() && shot.y < tank.getY() + 140){
                     shot.isLive = false;
                     tank.isLive = false;
+                    bombs.add(new Bomb(tank.getX(),tank.getY()));
                 }
                 break;
             case 2:
@@ -192,6 +227,7 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
                 if(shot.x > tank.getX() && shot.x < tank.getX() + 140 && shot.y > tank.getY() && shot.y < tank.getY() + 110){
                     shot.isLive = false;
                     tank.isLive = false;
+                    bombs.add(new Bomb(tank.getX(),tank.getY()));
                 }
                 break;
         }
