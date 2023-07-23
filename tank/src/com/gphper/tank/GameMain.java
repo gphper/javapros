@@ -10,8 +10,10 @@ public class GameMain extends JFrame {
 
     public GameMain(){
         panel = new MyPanel();
+        (new Thread(panel)).start();
+
         this.add(panel);
-        this.setSize(1000,750);
+        this.setSize(GlobalVar.PanelWidth,GlobalVar.PanelHeight);
         this.addKeyListener(panel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
