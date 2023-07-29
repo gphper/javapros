@@ -24,7 +24,7 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
         for (int i = 0; i < enemyTankSize; i++) {
             EnemyTank tank = new EnemyTank((150 * (i+1)),0,1);
             new Thread(tank).start();
-            // 添加地方坦克子弹对象
+            // 添加敌方坦克子弹对象
             Shot shot = new Shot(tank.getX()+50,tank.getY()+170,tank.getDirect());
             new Thread(shot).start();
             tank.shots.add(shot);
@@ -39,12 +39,13 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
     public void paint(Graphics g) {
         super.paint(g);
         g.fillRect(0,0,1000,750);
-        drawTank(hero.getX(),hero.getY(),g,hero.getDirect(),0);
+        if (hero.isLive){
+            drawTank(hero.getX(),hero.getY(),g,hero.getDirect(),0);
+        }
         //画我方坦克子弹
         if (hero.shots.size() > 0){
 
             for (int i = 0; i < hero.shots.size(); i++) {
-                System.out.println(i);
                 Shot shot = hero.shots.get(i);
                 if (shot.isLive) {
                     g.setColor(Color.RED);
@@ -224,19 +225,33 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
                 }
             }
 
+            hitHero();
+
             this.repaint();
         }
     }
 
+    public void hitHero(){
+        for (int j = 0; j < enemyTank.size(); j++) {
+            EnemyTank enemyTank1 = enemyTank.get(j);
+            if (enemyTank1.shots.size() > 0){
+                for (int i = 0; i < enemyTank1.shots.size(); i++) {
+                    Shot shot = enemyTank1.shots.get(i);
+                    if (hero.isLive && shot.isLive){
+                        hitTank(shot,hero);
+                    }
+                }
+            }
+        }
+    }
 
-    public void hitTank(Shot shot,EnemyTank tank){
+    public void hitTank(Shot shot,Tank tank){
         switch (tank.getDirect()){
             case 0:
             case 1:
                 if(shot.x > tank.getX() && shot.x < tank.getX() + 110 && shot.y > tank.getY() && shot.y < tank.getY() + 140){
                     // 删除子弹
                     shot.isLive = false;
-                    hero.shots.remove(shot);
 
                     tank.isLive = false;
                     bombs.add(new Bomb(tank.getX(),tank.getY()));
@@ -247,7 +262,6 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
                 if(shot.x > tank.getX() && shot.x < tank.getX() + 140 && shot.y > tank.getY() && shot.y < tank.getY() + 110){
                     // 删除子弹
                     shot.isLive = false;
-                    hero.shots.remove(shot);
 
                     tank.isLive = false;
                     bombs.add(new Bomb(tank.getX(),tank.getY()));
