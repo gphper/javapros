@@ -23,6 +23,7 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
         hero.setSpeed(5);
         for (int i = 0; i < enemyTankSize; i++) {
             EnemyTank tank = new EnemyTank((150 * (i+1)),0,1);
+            new Thread(tank).start();
             // 添加地方坦克子弹对象
             Shot shot = new Shot(tank.getX()+50,tank.getY()+170,tank.getDirect());
             new Thread(shot).start();
