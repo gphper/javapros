@@ -17,7 +17,10 @@ public class EnemyTank extends Tank implements Runnable{
             switch (getDirect()){
                 case 0:
                     for (int i = 0; i < 30; i++) {
-                        moveUp();
+                        if (getY() > 30){
+                            moveUp();
+                        }
+
                         try {
                             Thread.sleep(50);
                         } catch (InterruptedException e) {
@@ -27,7 +30,11 @@ public class EnemyTank extends Tank implements Runnable{
                     break;
                 case 1:
                     for (int i = 0; i < 30; i++) {
-                        moveDown();
+
+                        if (getY() < GlobalVar.PanelHeight - 170){
+                            moveDown();
+                        }
+
                         try {
                             Thread.sleep(50);
                         } catch (InterruptedException e) {
@@ -37,7 +44,11 @@ public class EnemyTank extends Tank implements Runnable{
                     break;
                 case 2:
                     for (int i = 0; i < 30; i++) {
-                        moveLeft();
+
+                        if(getX() > 30){
+                            moveLeft();
+                        }
+
                         try {
                             Thread.sleep(50);
                         } catch (InterruptedException e) {
@@ -47,7 +58,11 @@ public class EnemyTank extends Tank implements Runnable{
                     break;
                 case 3:
                     for (int i = 0; i < 30; i++) {
-                        moveRight();
+
+                        if (getX() < GlobalVar.PanelWidth - 170){
+                            moveRight();
+                        }
+
                         try {
                             Thread.sleep(50);
                         } catch (InterruptedException e) {

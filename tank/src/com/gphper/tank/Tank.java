@@ -12,19 +12,27 @@ public class Tank {
     }
 
     public void moveUp(){
-        y -= speed;
+        if (y > 30){
+            y -= speed;
+        }
     }
 
     public void moveDown(){
-        y += speed;
+        if (y < GlobalVar.PanelHeight - 170){
+            y += speed;
+        }
     }
 
     public void moveLeft(){
-        x -= speed;
+        if (x > 30){
+            x -= speed;
+        }
     }
 
     public void moveRight(){
-        x += speed;
+        if (x < GlobalVar.PanelWidth - 170){
+            x += speed;
+        }
     }
 
     public void setSpeed(int speed){

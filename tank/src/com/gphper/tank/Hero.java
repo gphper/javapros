@@ -8,7 +8,7 @@ public class Hero extends Tank{
     }
 
     public void shotEnemyTank(){
-        System.out.println("坦克方向："+getDirect());
+
         //创建子弹
         switch (getDirect()){
             case 0:
