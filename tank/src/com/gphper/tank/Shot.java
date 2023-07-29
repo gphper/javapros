@@ -38,7 +38,7 @@ public class Shot implements Runnable{
                     x += speed;
                     break;
             }
-            System.out.println("子弹 x = "+ x +" y = " + y);
+
             if(x < 0 || x > GlobalVar.PanelWidth || y < 0 || y > GlobalVar.PanelHeight || !isLive){
                 isLive = false;
                 break;
