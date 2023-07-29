@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Vector;
 
-public class MyPanel extends JPanel implements KeyListener,Runnable {
+public class MyPanel extends JPanel implements KeyListener, Runnable {
     Hero hero = null;
     Vector<EnemyTank> enemyTank = new Vector<>();
     // 存放炸弹的集合
@@ -18,14 +18,14 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
     Image image2 = null;
     Image image3 = null;
 
-    public MyPanel(){
-        hero = new Hero(100, 500,0);
+    public MyPanel() {
+        hero = new Hero(600, 500, 0);
         hero.setSpeed(5);
         for (int i = 0; i < enemyTankSize; i++) {
-            EnemyTank tank = new EnemyTank((150 * (i+1)),0,1);
+            EnemyTank tank = new EnemyTank((150 * (i + 1)), 0, 1);
             new Thread(tank).start();
             // 添加敌方坦克子弹对象
-            Shot shot = new Shot(tank.getX()+50,tank.getY()+170,tank.getDirect());
+            Shot shot = new Shot(tank.getX() + 50, tank.getY() + 170, tank.getDirect());
             new Thread(shot).start();
             tank.shots.add(shot);
             enemyTank.add(tank);
@@ -35,22 +35,23 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
         image2 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/mid.png"));
         image3 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/small.png"));
     }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        g.fillRect(0,0,1000,750);
-        if (hero.isLive){
-            drawTank(hero.getX(),hero.getY(),g,hero.getDirect(),0);
+        g.fillRect(0, 0, 1000, 750);
+        if (hero.isLive) {
+            drawTank(hero.getX(), hero.getY(), g, hero.getDirect(), 0);
         }
         //画我方坦克子弹
-        if (hero.shots.size() > 0){
+        if (hero.shots.size() > 0) {
 
             for (int i = 0; i < hero.shots.size(); i++) {
                 Shot shot = hero.shots.get(i);
                 if (shot.isLive) {
                     g.setColor(Color.RED);
-                    g.fillOval(shot.x,shot.y,10,10);
-                }else{
+                    g.fillOval(shot.x, shot.y, 10, 10);
+                } else {
                     hero.shots.remove(i);
                 }
             }
@@ -58,58 +59,60 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
         }
 
         //画敌军坦克
-        for(int i = 0;i < enemyTank.size();i++) {
+        for (int i = 0; i < enemyTank.size(); i++) {
             EnemyTank tmp = enemyTank.get(i);
-            if(tmp.isLive){
+            if (tmp.isLive) {
                 drawTank(tmp.getX(), tmp.getY(), g, tmp.getDirect(), 1);
 
                 // 绘制当前坦克的子弹
-                for(int j = 0;j < tmp.shots.size();j++){
+                for (int j = 0; j < tmp.shots.size(); j++) {
                     Shot shot = tmp.shots.get(j);
-                    if (shot.isLive){
+                    if (shot.isLive) {
                         g.setColor(Color.PINK);
-                        g.fillOval(shot.x,shot.y,10,10);
-                    }else{
+                        g.fillOval(shot.x, shot.y, 10, 10);
+                    } else {
                         tmp.shots.remove(shot);
                     }
                 }
-            }else{
+            } else {
                 enemyTank.remove(tmp);
             }
         }
 
         // 绘制爆炸效果
-        if (bombs.size() > 0){
-            for (int i = 0; i < bombs.size();i++){
-                Bomb bomb = bombs.get(i);
+        if (bombs.size() > 0) {
 
-                if (bomb.life == 0) {
-                   bombs.remove(bomb);
-                   continue;
+            for (int i = 0; i < bombs.size(); i++) {
+                Bomb bomb = bombs.get(i);
+                if (!bomb.isLive) {
+                    bombs.remove(bomb);
+                    continue;
                 }
 
-                if (bomb.life > 6){
-                    g.drawImage(image1, bomb.x, bomb.y,100,100,this);
-                }else if(bomb.life > 3){
-                    g.drawImage(image2, bomb.x, bomb.y,100,100,this);
-                } else{
-                    g.drawImage(image3, bomb.x, bomb.y,100,100,this);
+                if (bomb.life > 6) {
+                    g.drawImage(image1, bomb.x, bomb.y, 100, 100, this);
+                } else if (bomb.life > 3) {
+                    g.drawImage(image2, bomb.x, bomb.y, 100, 100, this);
+                } else {
+                    g.drawImage(image3, bomb.x, bomb.y, 100, 100, this);
                 }
 
                 bomb.lifeDown();
+
             }
+
         }
     }
 
     /**
-     * @param x x坐标
-     * @param y y坐标
-     * @param g 画笔
+     * @param x      x坐标
+     * @param y      y坐标
+     * @param g      画笔
      * @param direct 方向 0上 1下 2左 3右
-     * @param type 0我方 1敌方
+     * @param type   0我方 1敌方
      */
-    public void drawTank(int x,int y,Graphics g,int direct,int type){
-        switch (type){
+    public void drawTank(int x, int y, Graphics g, int direct, int type) {
+        switch (type) {
             case 0:
                 g.setColor(Color.CYAN);
                 break;
@@ -118,54 +121,54 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
                 break;
         }
 
-        switch (direct){
+        switch (direct) {
             case 0:
                 // 左轮
-                g.fill3DRect(x,y,30,140,false);
+                g.fill3DRect(x, y, 30, 140, false);
                 // 右轮
-                g.fill3DRect(x+80,y,30,140,false);
+                g.fill3DRect(x + 80, y, 30, 140, false);
                 // 壳子
-                g.fill3DRect(x+30,y+20,50,100,false);
+                g.fill3DRect(x + 30, y + 20, 50, 100, false);
                 // 炮管
-                g.fill3DRect(x+50,y-30,10,100,false);
+                g.fill3DRect(x + 50, y - 30, 10, 100, false);
                 // 圆盖
-                g.fillOval(x+30,y+35,50,50);
+                g.fillOval(x + 30, y + 35, 50, 50);
                 break;
             case 1:
                 // 左轮
-                g.fill3DRect(x,y,30,140,false);
+                g.fill3DRect(x, y, 30, 140, false);
                 // 右轮
-                g.fill3DRect(x+80,y,30,140,false);
+                g.fill3DRect(x + 80, y, 30, 140, false);
                 // 壳子
-                g.fill3DRect(x+30,y+20,50,100,false);
+                g.fill3DRect(x + 30, y + 20, 50, 100, false);
                 // 炮管
-                g.fill3DRect(x+50,y+70,10,100,false);
+                g.fill3DRect(x + 50, y + 70, 10, 100, false);
                 // 圆盖
-                g.fillOval(x+30,y+35,50,50);
+                g.fillOval(x + 30, y + 35, 50, 50);
                 break;
             case 3:
                 // 左轮
-                g.fill3DRect(x,y,140,30,false);
+                g.fill3DRect(x, y, 140, 30, false);
                 // 右轮
-                g.fill3DRect(x,y+80,140,30,false);
+                g.fill3DRect(x, y + 80, 140, 30, false);
                 // 壳子
-                g.fill3DRect(x+20,y+30,100,50,false);
+                g.fill3DRect(x + 20, y + 30, 100, 50, false);
                 // 炮管
-                g.fill3DRect(x+70,y+50,100,10,false);
+                g.fill3DRect(x + 70, y + 50, 100, 10, false);
                 // 圆盖
-                g.fillOval(x+35,y+30,50,50);
+                g.fillOval(x + 35, y + 30, 50, 50);
                 break;
             case 2:
                 // 左轮
-                g.fill3DRect(x,y,140,30,false);
+                g.fill3DRect(x, y, 140, 30, false);
                 // 右轮
-                g.fill3DRect(x,y+80,140,30,false);
+                g.fill3DRect(x, y + 80, 140, 30, false);
                 // 壳子
-                g.fill3DRect(x+20,y+30,100,50,false);
+                g.fill3DRect(x + 20, y + 30, 100, 50, false);
                 // 炮管
-                g.fill3DRect(x-30,y+50,100,10,false);
+                g.fill3DRect(x - 30, y + 50, 100, 10, false);
                 // 圆盖
-                g.fillOval(x+35,y+30,50,50);
+                g.fillOval(x + 35, y + 30, 50, 50);
                 break;
         }
     }
@@ -177,10 +180,10 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_W){
+        if (e.getKeyCode() == KeyEvent.VK_W) {
             hero.setDirect(0);
             hero.moveUp();
-        }else if (e.getKeyCode() == KeyEvent.VK_A) {
+        } else if (e.getKeyCode() == KeyEvent.VK_A) {
             hero.setDirect(2);
             hero.moveLeft();
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
@@ -205,21 +208,21 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
     @Override
     public void run() {
 
-        while(true){
+        while (true) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
-            if (hero.shots.size() > 0){
+            if (hero.shots.size() > 0) {
                 for (int i = 0; i < hero.shots.size(); i++) {
                     Shot shot = hero.shots.get(i);
 
                     for (int j = 0; j < enemyTank.size(); j++) {
                         EnemyTank enemyTank1 = enemyTank.get(j);
                         if (shot.isLive && enemyTank1.isLive) {
-                            hitTank(shot,enemyTank1);
+                            hitTank(shot, enemyTank1);
                         }
                     }
                 }
@@ -231,40 +234,40 @@ public class MyPanel extends JPanel implements KeyListener,Runnable {
         }
     }
 
-    public void hitHero(){
+    public void hitHero() {
         for (int j = 0; j < enemyTank.size(); j++) {
             EnemyTank enemyTank1 = enemyTank.get(j);
-            if (enemyTank1.shots.size() > 0){
+            if (enemyTank1.shots.size() > 0) {
                 for (int i = 0; i < enemyTank1.shots.size(); i++) {
                     Shot shot = enemyTank1.shots.get(i);
-                    if (hero.isLive && shot.isLive){
-                        hitTank(shot,hero);
+                    if (hero.isLive && shot.isLive) {
+                        hitTank(shot, hero);
                     }
                 }
             }
         }
     }
 
-    public void hitTank(Shot shot,Tank tank){
-        switch (tank.getDirect()){
+    public void hitTank(Shot shot, Tank tank) {
+        switch (tank.getDirect()) {
             case 0:
             case 1:
-                if(shot.x > tank.getX() && shot.x < tank.getX() + 110 && shot.y > tank.getY() && shot.y < tank.getY() + 140){
+                if (shot.x > tank.getX() && shot.x < tank.getX() + 110 && shot.y > tank.getY() && shot.y < tank.getY() + 140) {
                     // 删除子弹
                     shot.isLive = false;
 
                     tank.isLive = false;
-                    bombs.add(new Bomb(tank.getX(),tank.getY()));
+                    bombs.add(new Bomb(tank.getX(), tank.getY()));
                 }
                 break;
             case 2:
             case 3:
-                if(shot.x > tank.getX() && shot.x < tank.getX() + 140 && shot.y > tank.getY() && shot.y < tank.getY() + 110){
+                if (shot.x > tank.getX() && shot.x < tank.getX() + 140 && shot.y > tank.getY() && shot.y < tank.getY() + 110) {
                     // 删除子弹
                     shot.isLive = false;
 
                     tank.isLive = false;
-                    bombs.add(new Bomb(tank.getX(),tank.getY()));
+                    bombs.add(new Bomb(tank.getX(), tank.getY()));
                 }
                 break;
         }

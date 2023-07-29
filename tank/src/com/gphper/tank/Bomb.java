@@ -11,10 +11,17 @@ public class Bomb {
     }
 
     public void lifeDown(){
+
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         if (life > 0){
-            life --;
+            this.life --;
         }else{
-            isLive = false;
+            this.isLive = false;
         }
     }
 }
